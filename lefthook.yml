@@ -1,0 +1,14 @@
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      run: pnpm biome check --write --error-on-warnings --files-ignore-unknown=true --no-errors-on-unmatched {staged_files}
+      stage_fixed: true
+  scripts:
+    block-commits-to-main.sh:
+      runner: bash
+pre-push:
+  scripts:
+    block-pushes-to-main.sh:
+      runner: bash
+      use_stdin: true
