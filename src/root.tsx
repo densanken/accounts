@@ -8,9 +8,15 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-
 import type { Route } from "./+types/root";
+import { useTheme } from "./hooks/use-theme";
+import { parseTheme } from "./lib/theme";
 import "./app.css";
+
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const theme = await parseTheme(request.headers.get("Cookie"));
+  return { theme };
+};
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -25,9 +31,11 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export const Layout = ({ children }: { children: React.ReactNode }) => {
+  const theme = useTheme();
+
   return (
-    <html lang="en">
+    <html lang="ja" className={theme === "system" ? undefined : theme}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -41,9 +49,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </body>
     </html>
   );
-}
+};
 
-export default function App() {
+const App = () => {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
@@ -51,18 +59,20 @@ export default function App() {
       <Outlet />
     </QueryClientProvider>
   );
-}
+};
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
+export default App;
+
+export const ErrorBoundary = ({ error }: Route.ErrorBoundaryProps) => {
+  let message = "エラーが発生しました";
+  let details = "予期しないエラーが発生しました。";
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
+    message = error.status === 404 ? "404" : "エラー";
     details =
       error.status === 404
-        ? "The requested page could not be found."
+        ? "お探しのページが見つかりませんでした。"
         : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
@@ -80,4 +90,4 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       )}
     </main>
   );
-}
+};
