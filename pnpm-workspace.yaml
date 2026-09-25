@@ -1,0 +1,6 @@
+minimumReleaseAge: 4320 # 3 days
+minimumReleaseAgeStrict: true
+allowBuilds:
+  esbuild: false
+  lefthook: true
+  workerd: true
