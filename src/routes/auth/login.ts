@@ -4,11 +4,11 @@ import { requireIdpProvider } from "../../lib/auth/auth.server";
 import { sanitizeReturnTo } from "../../lib/auth/return-to.server";
 import type { Route } from "./+types/login";
 
-// better-auth handles state, nonce, and PKCE; this only sanitizes returnTo.
+// better-auth handles state, nonce, and PKCE; this only sanitizes return_to.
 export const loader = async ({ request, context }: Route.LoaderArgs) => {
   const { env } = context.get(cloudflareContext);
   const url = new URL(request.url);
-  const callbackURL = sanitizeReturnTo(url.searchParams.get("returnTo"));
+  const callbackURL = sanitizeReturnTo(url.searchParams.get("return_to"));
 
   const auth = await requireIdpProvider(env);
   const { headers, response } = await auth.api.signInSocial({

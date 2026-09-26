@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   isRouteErrorResponse,
@@ -9,13 +9,17 @@ import {
   ScrollRestoration,
 } from "react-router";
 import type { Route } from "./+types/root";
+import { cloudflareContext } from "./context";
 import { useTheme } from "./hooks/use-theme";
+import { createQueryClient } from "./lib/query/client";
 import { parseTheme } from "./lib/theme";
 import "./app.css";
 
-export const loader = async ({ request }: Route.LoaderArgs) => {
+export const loader = async ({ request, context }: Route.LoaderArgs) => {
+  const { env } = context.get(cloudflareContext);
   const theme = await parseTheme(request.headers.get("Cookie"));
-  return { theme };
+  // The browser's IdP API client needs just the IdP's origin, not the full issuer URL.
+  return { theme, idpOrigin: new URL(env.IDP_ISSUER).origin };
 };
 
 export const links: Route.LinksFunction = () => [
@@ -52,7 +56,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 };
 
 const App = () => {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(() => createQueryClient());
 
   return (
     <QueryClientProvider client={queryClient}>

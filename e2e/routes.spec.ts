@@ -21,7 +21,7 @@ test("redirects an unauthenticated visitor away from a guarded route", async ({
   });
   expect(response.status()).toBe(302);
   expect(response.headers().location).toBe(
-    "/auth/login?returnTo=%2Fconnections"
+    "/auth/login?return_to=%2Fconnections"
   );
 });
 

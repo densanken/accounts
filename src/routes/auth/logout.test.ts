@@ -68,7 +68,7 @@ describe("auth/logout action", () => {
     }
     expect(guardResponse?.status).toBe(302);
     expect(guardResponse?.headers.get("Location")).toBe(
-      "/auth/login?returnTo=%2Fconnections"
+      "/auth/login?return_to=%2Fconnections"
     );
   });
 
