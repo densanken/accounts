@@ -1,0 +1,12 @@
+# Local development config and secrets. Copy to `.dev.vars` (gitignored) and
+# fill in real values. In deployed environments these are Cloudflare vars
+# (IDP_ISSUER, OIDC_CLIENT_ID, ACCOUNTS_BASE_URL, OIDC_POST_LOGOUT_REDIRECT_URI)
+# or secrets (OIDC_CLIENT_SECRET, ACCOUNTS_SESSION_SECRET) set via the
+# dashboard or `wrangler secret put <NAME>` - never in wrangler.jsonc's
+# `vars`, which would overwrite them on deploy.
+IDP_ISSUER=http://localhost:8787
+OIDC_CLIENT_ID=accounts
+ACCOUNTS_BASE_URL=http://localhost:5173
+OIDC_POST_LOGOUT_REDIRECT_URI=http://localhost:5173/
+OIDC_CLIENT_SECRET=
+ACCOUNTS_SESSION_SECRET=

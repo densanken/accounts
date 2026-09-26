@@ -8,4 +8,9 @@
   "observability": {
     "enabled": true
   }
+  // Environment variables live in `.dev.vars` locally (see `.dev.vars.example`)
+  // and in the dashboard or `wrangler secret put` when deployed.
+  // The IdP must register `${ACCOUNTS_BASE_URL}/oauth/callback` as the
+  // redirect URI, and OIDC_POST_LOGOUT_REDIRECT_URI as the post-logout
+  // redirect URI.
 }

@@ -37,6 +37,10 @@ jobs:
         with:
           node-version-file: .nvmrc
 
+      # `wrangler types` (postinstall) types Env from .dev.vars.
+      - name: Create .dev.vars
+        run: cp .dev.vars.example .dev.vars
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
