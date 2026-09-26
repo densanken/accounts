@@ -27,7 +27,7 @@ describe("auth/login loader", () => {
 
   it("redirects to the IdP authorize endpoint with state, nonce, and PKCE", async () => {
     const response = await callLoader(
-      "https://accounts.example.com/auth/login?returnTo=/profile"
+      "https://accounts.example.com/auth/login?return_to=/profile"
     );
 
     expect(response.status).toBe(302);
@@ -55,9 +55,9 @@ describe("auth/login loader", () => {
     expect(response.headers.get("Cache-Control")).toBe("no-store");
   });
 
-  it("still redirects when returnTo is an off-site URL (sanitized to /)", async () => {
+  it("still redirects when return_to is an off-site URL (sanitized to /)", async () => {
     const response = await callLoader(
-      "https://accounts.example.com/auth/login?returnTo=https://evil.example"
+      "https://accounts.example.com/auth/login?return_to=https://evil.example"
     );
 
     expect(response.status).toBe(302);

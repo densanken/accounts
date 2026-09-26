@@ -19,7 +19,7 @@ export const createAuthenticatedCookie = async (
 
   const loginResponse = await loginLoader({
     request: new Request(
-      `${TEST_ENV.ACCOUNTS_BASE_URL}/auth/login?returnTo=${encodeURIComponent(returnTo)}`
+      `${TEST_ENV.ACCOUNTS_BASE_URL}/auth/login?return_to=${encodeURIComponent(returnTo)}`
     ),
     context: testRouterContext(),
     params: {},

@@ -19,7 +19,7 @@ const ISSUER = TEST_ENV.IDP_ISSUER;
 const startLogin = async (returnTo = "/profile") => {
   const response = await loginLoader({
     request: new Request(
-      `https://accounts.example.com/auth/login?returnTo=${encodeURIComponent(returnTo)}`
+      `https://accounts.example.com/auth/login?return_to=${encodeURIComponent(returnTo)}`
     ),
     context: testRouterContext(),
     params: {},
@@ -70,7 +70,7 @@ describe("auth callback (mounted at /oauth/callback)", () => {
     resetAuthForTests();
   });
 
-  it("exchanges the code, verifies the ID token, creates a session, and redirects to returnTo", async () => {
+  it("exchanges the code, verifies the ID token, creates a session, and redirects to return_to", async () => {
     const { state, nonce, cookie } = await startLogin("/profile");
     const idToken = await signTestIdToken(keys, {
       issuer: ISSUER,

@@ -1,5 +1,6 @@
 import { redirect } from "react-router";
 import { getAuth } from "./auth.server";
+import { loginPath } from "./login-path";
 
 const getSession = (request: Request, env: Env) => {
   const auth = getAuth(env);
@@ -8,14 +9,14 @@ const getSession = (request: Request, env: Env) => {
 
 /**
  * Guards a route behind an Accounts session. Redirects to `/auth/login`
- * with the current path as `returnTo` when there is none.
+ * with the current path as `return_to` when there is none.
  */
 export const requireSession = async (request: Request, env: Env) => {
   const session = await getSession(request, env);
   if (!session) {
     const url = new URL(request.url);
     const returnTo = `${url.pathname}${url.search}`;
-    throw redirect(`/auth/login?returnTo=${encodeURIComponent(returnTo)}`);
+    throw redirect(loginPath(returnTo));
   }
   return session;
 };
