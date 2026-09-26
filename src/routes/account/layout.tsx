@@ -1,5 +1,5 @@
 import { Blocks, UserRound, UserRoundCog } from "lucide-react";
-import { Form, Link, Outlet, useLocation } from "react-router";
+import { Form, Link, Outlet, useLocation, useSearchParams } from "react-router";
 import { Button } from "../../components/ui/button";
 import {
   Sidebar,
@@ -15,7 +15,19 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "../../components/ui/sidebar";
+import { cloudflareContext } from "../../context";
+import { hasSession } from "../../lib/auth/require-session.server";
 import { ThemeToggle } from "./_components/theme-toggle";
+import type { Route } from "./+types/layout";
+
+// This layout has no middleware of its own: the index route is public (see
+// routes.ts), and guarded routes below it run their own session check via
+// guard.ts. This loader only needs to report whether there's a session, so
+// the component can pick the login screen or the authenticated shell.
+export const loader = async ({ request, context }: Route.LoaderArgs) => {
+  const { env } = context.get(cloudflareContext);
+  return { authenticated: await hasSession(request, env) };
+};
 
 const navItems = [
   { to: "/", label: "プロフィール", icon: UserRound },
@@ -27,6 +39,48 @@ const AppTitle = () => (
     <UserRoundCog className="size-5" />
     CCS Account
   </span>
+);
+
+// Maps better-auth's onAPIError `error` query param to a Japanese message.
+// Anything not listed here (or unrecognized) falls back to a generic one.
+const authErrorMessages: Record<string, string> = {
+  access_denied: "ログインがキャンセルされました",
+};
+
+const AuthErrorBanner = () => {
+  const [searchParams] = useSearchParams();
+  const error = searchParams.get("error");
+  if (!error) {
+    return null;
+  }
+
+  return (
+    <div
+      role="alert"
+      className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-destructive text-sm"
+    >
+      {authErrorMessages[error] ?? "ログインに失敗しました"}
+    </div>
+  );
+};
+
+const LoginScreen = () => (
+  <div className="grid min-h-svh grid-rows-[1fr_auto_2fr] justify-items-center p-6">
+    <main className="row-start-2 flex w-full max-w-sm flex-col items-center gap-6 text-center">
+      <h1 className="flex items-center gap-2 font-bold text-2xl">
+        <UserRoundCog className="size-7" />
+        CCS Account
+      </h1>
+      <AuthErrorBanner />
+      <Button
+        size="lg"
+        className="h-11 w-full text-base"
+        render={<Link reloadDocument to="/auth/login" />}
+      >
+        Sign in with CCS ID
+      </Button>
+    </main>
+  </div>
 );
 
 // Rendered inside <SidebarProvider>, so it can close the mobile sheet on navigation.
@@ -53,7 +107,11 @@ const AccountNav = () => {
   );
 };
 
-const AccountLayout = () => {
+const AccountLayout = ({ loaderData }: Route.ComponentProps) => {
+  if (!loaderData.authenticated) {
+    return <LoginScreen />;
+  }
+
   return (
     <SidebarProvider>
       <Sidebar>
