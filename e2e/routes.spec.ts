@@ -32,7 +32,7 @@ test("shows an error banner on the login screen when redirected with an error", 
   await expect(
     page
       .getByRole("alert")
-      .filter({ hasText: "ログインがキャンセルされました" })
+      .filter({ hasText: "ログインがキャンセルされたか、許可されませんでした" })
   ).toBeVisible();
 });
 

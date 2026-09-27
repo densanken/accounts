@@ -22,12 +22,14 @@ const linkedAccountsBody = {
       provider: "discord",
       providerAvatarUrl: "https://cdn.example.com/discord.png",
       providerDisplayName: "yusuke",
+      guildMembership: "allowed",
     },
     {
       id: "la-github",
       provider: "github",
       providerAvatarUrl: null,
       providerDisplayName: "yusuke-gh",
+      guildMembership: null,
     },
   ],
 };

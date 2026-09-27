@@ -6,6 +6,8 @@ const linkedAccountSchema = v.object({
   provider: v.string(),
   providerAvatarUrl: v.nullable(v.string()),
   providerDisplayName: v.nullable(v.string()),
+  // null for a non-Discord account, or a Discord account not checked yet.
+  guildMembership: v.nullable(v.picklist(["allowed", "denied"])),
 });
 
 export type LinkedAccount = v.InferOutput<typeof linkedAccountSchema>;
@@ -24,3 +26,15 @@ export const getLinkedAccounts = async (
   );
   return linkedAccounts;
 };
+
+export const unlinkAccount = (
+  idpOrigin: string,
+  provider: string,
+  linkedAccountId: string
+): Promise<void> =>
+  idpFetch(
+    idpOrigin,
+    `/auth/link/${provider}/${linkedAccountId}`,
+    v.undefined(),
+    { method: "DELETE" }
+  );

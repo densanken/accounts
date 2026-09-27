@@ -12,18 +12,9 @@ import {
 } from "../../../components/ui/select";
 
 import type { LinkedAccount } from "../../../lib/idp/linked-accounts";
+import { providerLabel } from "../../../lib/idp/providers";
 
 export const fieldLabelClassName = "font-medium text-muted-foreground text-sm";
-
-const providerLabels: Record<string, string> = {
-  discord: "Discord",
-  github: "GitHub",
-  google: "Google",
-  x: "X",
-};
-
-const providerLabel = (provider: string): string =>
-  providerLabels[provider] ?? provider;
 
 const accountLabel = (account: LinkedAccount): string =>
   account.providerDisplayName

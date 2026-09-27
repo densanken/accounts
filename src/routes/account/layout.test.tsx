@@ -66,45 +66,38 @@ describe("AccountLayout", () => {
     expect(screen.queryByText("child content")).not.toBeInTheDocument();
   });
 
-  it("shows a mapped error banner from the error query param", () => {
-    const Stub = createRoutesStub([
-      {
-        id: "root",
-        path: "/",
-        loader: () => ({ authenticated: false }),
-        Component: AccountLayout,
-      },
-    ]);
+  it.each([
+    [
+      "access_denied",
+      "access_denied",
+      "ログインがキャンセルされたか、許可されませんでした",
+    ],
+    [
+      "login_required",
+      "login_required",
+      "ログインの有効期限が切れました。もう一度ログインしてください",
+    ],
+    ["an unrecognized code", "server_error", "ログインに失敗しました"],
+  ] as const)(
+    "shows the mapped error banner for %s",
+    (_label, code, message) => {
+      const Stub = createRoutesStub([
+        {
+          id: "root",
+          path: "/",
+          loader: () => ({ authenticated: false }),
+          Component: AccountLayout,
+        },
+      ]);
 
-    render(
-      <Stub
-        initialEntries={["/?error=access_denied"]}
-        hydrationData={{ loaderData: { root: { authenticated: false } } }}
-      />
-    );
+      render(
+        <Stub
+          initialEntries={[`/?error=${code}`]}
+          hydrationData={{ loaderData: { root: { authenticated: false } } }}
+        />
+      );
 
-    expect(
-      screen.getByText("ログインがキャンセルされました")
-    ).toBeInTheDocument();
-  });
-
-  it("shows a generic error banner for an unrecognized error code", () => {
-    const Stub = createRoutesStub([
-      {
-        id: "root",
-        path: "/",
-        loader: () => ({ authenticated: false }),
-        Component: AccountLayout,
-      },
-    ]);
-
-    render(
-      <Stub
-        initialEntries={["/?error=server_error"]}
-        hydrationData={{ loaderData: { root: { authenticated: false } } }}
-      />
-    );
-
-    expect(screen.getByText("ログインに失敗しました")).toBeInTheDocument();
-  });
+      expect(screen.getByText(message)).toBeInTheDocument();
+    }
+  );
 });
