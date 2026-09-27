@@ -42,9 +42,14 @@ const AppTitle = () => (
 );
 
 // Maps better-auth's onAPIError `error` query param to a Japanese message.
-// Anything not listed here (or unrecognized) falls back to a generic one.
+// The IdP collapses its own login errors (Discord server membership,
+// already-linked accounts, disabled users, ...) into the standard OAuth codes,
+// so access_denied covers more than a cancellation. Anything not listed falls
+// back to a generic message.
 const authErrorMessages: Record<string, string> = {
-  access_denied: "ログインがキャンセルされました",
+  access_denied: "ログインがキャンセルされたか、許可されませんでした",
+  login_required:
+    "ログインの有効期限が切れました。もう一度ログインしてください",
 };
 
 const AuthErrorBanner = () => {
