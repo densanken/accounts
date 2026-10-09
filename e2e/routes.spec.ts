@@ -13,16 +13,15 @@ test("shows a login screen instead of redirecting an unauthenticated visitor", a
   ).toBeVisible();
 });
 
-test("redirects an unauthenticated visitor away from a guarded route", async ({
+test("sends an unauthenticated visitor on a guarded route to the login screen", async ({
   page,
 }) => {
-  const response = await page.request.get("/connections", {
-    maxRedirects: 0,
-  });
-  expect(response.status()).toBe(302);
-  expect(response.headers().location).toBe(
-    "/auth/login?return_to=%2Fconnections"
-  );
+  await page.goto("/connections");
+  await expect(page).toHaveURL("/?return_to=%2Fconnections");
+  await expect(page).toHaveTitle("ログイン | CCS Account");
+  await expect(
+    page.getByRole("link", { name: "Sign in with CCS ID" })
+  ).toHaveAttribute("href", "/auth/login?return_to=%2Fconnections");
 });
 
 test("shows an error banner on the login screen when redirected with an error", async ({
