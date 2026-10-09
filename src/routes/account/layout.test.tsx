@@ -59,11 +59,33 @@ describe("AccountLayout", () => {
 
     expect(
       screen.getByRole("link", { name: "Sign in with CCS ID" })
-    ).toHaveAttribute("href", "/auth/login");
+    ).toHaveAttribute("href", "/auth/login?return_to=%2F");
     expect(
       screen.queryByRole("link", { name: "プロフィール" })
     ).not.toBeInTheDocument();
     expect(screen.queryByText("child content")).not.toBeInTheDocument();
+  });
+
+  it("forwards return_to from the URL into the sign-in link", () => {
+    const Stub = createRoutesStub([
+      {
+        id: "root",
+        path: "/",
+        loader: () => ({ authenticated: false }),
+        Component: AccountLayout,
+      },
+    ]);
+
+    render(
+      <Stub
+        initialEntries={["/?return_to=%2Fconnections"]}
+        hydrationData={{ loaderData: { root: { authenticated: false } } }}
+      />
+    );
+
+    expect(
+      screen.getByRole("link", { name: "Sign in with CCS ID" })
+    ).toHaveAttribute("href", "/auth/login?return_to=%2Fconnections");
   });
 
   it.each([

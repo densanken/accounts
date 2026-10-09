@@ -36,7 +36,7 @@ describe("account guard middleware", () => {
     resetAuthForTests();
   });
 
-  it("redirects to /auth/login with return_to when there is no session", async () => {
+  it("redirects to / with return_to when there is no session", async () => {
     let response: Response | undefined;
     try {
       await callGuard("https://accounts.example.com/connections?tab=github");
@@ -46,7 +46,7 @@ describe("account guard middleware", () => {
 
     expect(response?.status).toBe(302);
     expect(response?.headers.get("Location")).toBe(
-      "/auth/login?return_to=%2Fconnections%3Ftab%3Dgithub"
+      "/?return_to=%2Fconnections%3Ftab%3Dgithub"
     );
   });
 
@@ -78,7 +78,7 @@ describe("account guard middleware", () => {
 
     expect(response?.status).toBe(302);
     expect(response?.headers.get("Location")).toBe(
-      "/auth/login?return_to=%2Fconnections"
+      "/?return_to=%2Fconnections"
     );
   });
 });

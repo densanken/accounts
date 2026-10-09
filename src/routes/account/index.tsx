@@ -1,10 +1,20 @@
 import { pageTitle } from "../../lib/page-title";
 import { ProfileForm } from "./_components/profile-form";
+import type { Route } from "./+types/index";
+
+type Match = Route.MetaArgs["matches"][number];
 
 // Public: the parent layout renders a login screen here instead of this
-// component when there's no session. Any loader added to this route must
-// handle the unauthenticated case itself (see routes/account/layout.tsx).
-export const meta = () => [{ title: pageTitle("プロフィール") }];
+// component when there's no session, so the title reflects the parent
+// layout's `authenticated` loader data rather than assuming this page renders.
+export const meta: Route.MetaFunction = ({ matches }) => {
+  const layout = matches.find(
+    (match): match is Extract<Match, { id: "routes/account/layout" }> =>
+      match?.id === "routes/account/layout"
+  );
+  const title = layout?.loaderData.authenticated ? "プロフィール" : "ログイン";
+  return [{ title: pageTitle(title) }];
+};
 
 const Profile = () => (
   <div className="flex flex-col gap-6">

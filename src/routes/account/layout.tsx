@@ -16,6 +16,7 @@ import {
   useSidebar,
 } from "../../components/ui/sidebar";
 import { cloudflareContext } from "../../context";
+import { loginPath } from "../../lib/auth/login-path";
 import { hasSession } from "../../lib/auth/require-session.server";
 import { ThemeToggle } from "./_components/theme-toggle";
 import type { Route } from "./+types/layout";
@@ -69,24 +70,29 @@ const AuthErrorBanner = () => {
   );
 };
 
-const LoginScreen = () => (
-  <div className="grid min-h-svh grid-rows-[1fr_auto_2fr] justify-items-center p-6">
-    <main className="row-start-2 flex w-full max-w-sm flex-col items-center gap-6 text-center">
-      <h1 className="flex items-center gap-2 font-bold text-2xl">
-        <UserRoundCog className="size-7" />
-        CCS Account
-      </h1>
-      <AuthErrorBanner />
-      <Button
-        size="lg"
-        className="h-11 w-full text-base"
-        render={<Link reloadDocument to="/auth/login" />}
-      >
-        Sign in with CCS ID
-      </Button>
-    </main>
-  </div>
-);
+const LoginScreen = () => {
+  const [searchParams] = useSearchParams();
+  const returnTo = searchParams.get("return_to") ?? "/";
+
+  return (
+    <div className="grid min-h-svh grid-rows-[1fr_auto_2fr] justify-items-center p-6">
+      <main className="row-start-2 flex w-full max-w-sm flex-col items-center gap-6 text-center">
+        <h1 className="flex items-center gap-2 font-bold text-2xl">
+          <UserRoundCog className="size-7" />
+          CCS Account
+        </h1>
+        <AuthErrorBanner />
+        <Button
+          size="lg"
+          className="h-11 w-full text-base"
+          render={<Link reloadDocument to={loginPath(returnTo)} />}
+        >
+          Sign in with CCS ID
+        </Button>
+      </main>
+    </div>
+  );
+};
 
 // Rendered inside <SidebarProvider>, so it can close the mobile sheet on navigation.
 const AccountNav = () => {

@@ -1,27 +1,11 @@
-import { redirect } from "react-router";
 import { getAuth } from "./auth.server";
-import { loginPath } from "./login-path";
 
 const getSession = (request: Request, env: Env) => {
   const auth = getAuth(env);
   return auth.api.getSession({ headers: request.headers });
 };
 
-/**
- * Guards a route behind an Accounts session. Redirects to `/auth/login`
- * with the current path as `return_to` when there is none.
- */
-export const requireSession = async (request: Request, env: Env) => {
-  const session = await getSession(request, env);
-  if (!session) {
-    const url = new URL(request.url);
-    const returnTo = `${url.pathname}${url.search}`;
-    throw redirect(loginPath(returnTo));
-  }
-  return session;
-};
-
-/** Same check as `requireSession`, but reports the result instead of redirecting. */
+/** Reports whether the request carries a valid Accounts session. */
 export const hasSession = async (
   request: Request,
   env: Env
